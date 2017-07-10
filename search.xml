@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[分段函数c编程]]></title>
+    <url>%2Fposts%2F1363f13a%2F</url>
+    <content type="text"><![CDATA[分段函数c编程在[0,1),[1,4),[4,8),[8,12]分段上有不同的函数表达式 用switch case语句编程 12345678910111213t = (x&lt;1) + (x&lt;4) + (x&lt;8) + (x&lt;12)t = 0; //不在整个分段范围内t = 1; //在[8,12]分段内t = 2; //在[4,8)分段内t = 3; //在[1,4)分段内t = 4; //在[0,1)分段内switch(t) &#123; case break; &#125;]]></content>
+      <tags>
+        <tag>c</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[visaul studio]]></title>
+    <url>%2Fposts%2Ff05f4419%2F</url>
+    <content type="text"><![CDATA[visaul studio找不到调试文件解决方法： 右击simulation trial，选择属性，连接器-》常规-》输出文件，选择与父级相关，ok。]]></content>
+      <tags>
+        <tag>visaul studio</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[stm32的JTAG引脚]]></title>
+    <url>%2Fposts%2F5543e8ed%2F</url>
+    <content type="text"><![CDATA[stm32的JTAG引脚 PA13 JTMS-SWDIO PA14 JTCK-SWCLK PA15 JTDI PB3 JTDO PB4 NJTRST 平时最好不要用这五个引脚，不然要在程序里禁用JTAG下载，要重新启用还要切换BOOT0和BOOT1引脚的电平状态，然后用ISP下载。重新刷新flash。]]></content>
+      <tags>
+        <tag>stm32</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[M4系列工程时钟配置]]></title>
+    <url>%2Fposts%2F26d3795%2F</url>
+    <content type="text"><![CDATA[M4系列工程时钟配置 启动代码：startup_stm32f4xx.s 1234567891011&lt;span style="font-family:kaiti_GB2312;font-size:18px"&gt;;Reset handlerReset_Handler PROC EXPORT Reset_Handler [WEAK] IMPORT SyStemInit IMPORT __main LDR R0, =SystemInit BLX R0 LDR R0, =__main BX R0 ENDP&lt;/span&gt; 进入main函数之前，系统调用了SystemInit函数，该函数位于system——stm32f4xx.c文件中，此文件提供几个宏定义可以设置各个时钟: 123456&lt;span style="font-family:kaiti_GB2312;font-size:18px"&gt; /*------PLL Parameters------*/#define PLL_M 25 /* PLL_VCO = (HSE_VALUE or HSI_VALUE / PLL_M) * PLL_N */ #define PLL_N 336 #define PLL_P 2 /* SYSCLK = PLL_VCO / PLL_P */ #define PLL_Q 7 /* USB OTG FS, SDIO and RNG Clock = PLL_VCO / PLLQ */ 晶振频率是在函数stm32f4xx.h中进行设置的 123456789//外部晶振&lt;span style="font-family:KaiTi_GB2312;font-size:18px;"&gt;#if !defined (HSE_VALUE) #define HSE_VALUE ((uint32_t)25000000) /*!&lt; Value of the External oscillator in Hz */ #endif /* HSE_VALUE */&lt;/span&gt; //内部晶振&lt;span style="font-family:KaiTi_GB2312;font-size:18px;"&gt;#if !defined (HSI_VALUE) #define HSI_VALUE ((uint32_t)16000000) /*!&lt; Value of the Internal oscillator in Hz*/ #endif /* HSI_VALUE */ &lt;/span&gt; 综上,可以得出默认配置中: 锁相环压腔振荡器时钟PLL_VCO = 25 / 25 * 336 = 336MHz 系统时钟SYSCLK = 336 / 2 = 168MHz USB,SD卡时钟 = 336 / 7 = 48MHz 在SetSysClock函数中,配置了系统时钟,PLL倍频以及分频系数，如果外部时钟启动失败,系统会使用内部时钟默认配置: HCLK = SYSCLK / 1 = 168MHzPCLK2 = HCLK / 2 = 84MHzPCLK1 = HCLK / 4 = 42MHz]]></content>
+      <tags>
+        <tag>stm32</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[keil 使用技巧]]></title>
+    <url>%2Fposts%2Fd6270f2a%2F</url>
+    <content type="text"><![CDATA[keil 使用技巧1.仿真时查看各个外设寄存器的值 首先进去仿真状态，然后VIEW——》systemview——》选择你要查看的外设对应的寄存器. 如果点击systemview的状态是灰色的，没有寄存器供选择，则要进行如下操作： option for target’DEMO’——》target——》勾选（use custom SVD file）， 然后选择上面的路径，先在keil的安装包中，在SFD文件夹下找到对应单片机的SFR文件. 2如何在keil中得知单片机已使用的flash和ram编译完工程后，会在最后显示四个参数值，分别为： Code = a, RO_data = b, RW_data = c, ZI_data = d, Code 是代码占用的空间; RO-data是 Read Only 只读常量的大小，如const型; RW-data是（Read Write） 初始化了的可读写变量的大小, 初始化时RW-data从flash拷贝到RAM; ZI-data是（Zero Initialize） 没有初始化的可读写变量的大小。ZI-data不会被算做代码里因为不会被初始化。 简单的说就是在烧写的时候是FLASH中的被占用的空间为：Code+RO Data+RW Data 程序运行的时候，芯片内部RAM使用的空间为： RW Data + ZI Data 最后注意：他们的单位都是byte.]]></content>
+      <tags>
+        <tag>keil</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[ASCLL码表]]></title>
+    <url>%2Fposts%2Fd287ff7d%2F</url>
+    <content type="text"><![CDATA[ASCLL码表 缩写/字符 Hex Dec 解释 NUL(null) 00 0 空字符 SOH (start of handing) 01 1 标题开始 STX (start of text) 02 2 正文开始 ETX (end of text) 03 3 正文结束 EOT (end of transmission) 04 4 传输结束 ENQ (enquiry) 05 5 请求 ACK (acknowledge) 06 6 收到通知 BEL (bell) 07 7 响铃 BS (backspace) 08 8 退格 HT (horizontal tab) 09 9 水平制表符 LF (NL form feed,new page) 0A 10 换行键 VT (vertical tab) 0B 11 垂直制表符 FF (NP form feed,new page) 0C 12 换页键 CR (carriage return) 0D 13 回车键 SO (shift out) 0E 14 不用切换 SI (shift in) 0F 15 启用切换 DLE (data link escape) 10 16 数据链路转义 DC1 (device control 1) 11 17 设备控制1 DC2 (device control 2) 12 18 设备控制2 DC3 (device control 3) 13 19 设备控制3 DC4 (device control 4) 14 20 设备控制4 NAK (negative acknowledge) 15 21 拒绝接收 SYN (synchronous idle) 16 22 同步空闲 ETB (end of trans.block) 17 23 传输块结束 CAN (cancel) 18 24 取消/作废 EM (end of medium) 19 25 介质中断 SUB (substitute) 1A 26 替补 ESC (escape) 1B 27 溢出 FS (file separator) 1C 28 文件分隔符 GS (group separator) 1D 29 分组符 RS (record separator) 1E 30 记录分隔符 US (unit separator) 1F 31 单元分隔符 空格 20 32 ! 21 33 “ 22 34 # 23 35 $ 24 36 % 25 37 &amp; 26 38 ‘ 27 39 ( 28 40 ) 29 41 * 2A 42 + 2B 43 , 2C 44 - 2D 45 . 2E 46 / 2F 47 0 30 48 1 31 49 2 32 50 3 33 51 4 34 52 5 35 53 6 36 54 7 37 55 8 38 56 9 39 57 : 3A 58 ; 3B 59 &lt; 3C 60 = 3D 61 &gt; 3E 62 ? 3F 63 @ 40 64 A 41 65 B 42 66 C 43 67 D 44 68 E 45 69 F 46 70 G 47 71 H 48 72 I 49 73 J 4A 74 K 4B 75 L 4C 76 M 4D 77 N 4E 78 O 4F 79 P 50 80 Q 51 81 R 52 82 S 53 83 T 54 84 U 55 85 V 56 86 W 57 87 X 58 88 Y 59 99 Z 5A 90 [ 5B 91 \ 5C 92 ] 5D 93 ^ 5E 94 _ 5F 95 、 60 96 a 61 97 b 62 98 c 63 99 d 64 100 e 65 101 f 66 102 g 67 103 h 68 104 i 69 105 j 6A 106 k 6B 107 l 6C 108 m 6D 109 n 6E 110 o 6F 111 p 70 112 q 71 113 r 72 114 s 73 115 t 74 116 u 75 117 v 76 118 w 77 119 x 78 120 y 79 121 z 7A 122 { 7B 123 \ 7C 124 } 7D 125 ~ 7E 126 DEL(delete) 7F 127 删除]]></content>
+      <tags>
+        <tag>ASCLL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[ARM与ARM-Cortex、stm32容量问题]]></title>
+    <url>%2Fposts%2Fa93ad46a%2F</url>
+    <content type="text"><![CDATA[ARM与ARM-Cortex(转自ocean 2015) ARM7：ARMv4架构，ARM9：ARMv5架构，ARM11：ARMv6架构，ARM-Cortex 系列：ARMv7架构。 ARM7没有MMU(内存管理单元)，只能叫做MCU（微控制器），不能运行诸如Linux、WinCE等这些现代的多用户多进程操作系统，因为运行这些系统需要MMU，才能给每个用户进程分配进程自己独立的地址空间。ucOS、ucLinux这些精简实时的RTOS不需要MMU，当然可以在ARM7上运行。 ARM9、ARM11，是嵌入式CPU（处理器），带有MMU，可以运行诸如Linux等多用户多进程的操作系统，应用场合也不同于ARM7。 到了ARMv7架构的时候开始以Cortex来命名，并分成Cortex-A、Cortex-R、Cortex-M三个系列。三大系列分工明确：“A”系列面向尖端的基于虚拟内存的操作系统和用户应用；“R”系列针对实时系统；“M”系列对微控制器。简单的说Cortex-A系列是用于移动领域的CPU，Cortex-R和Cortex-M系列是用于实时控制领域的MCU。 所以看上去ARM7跟Cortex-M很像，因为他们都是MCU，但确是不同代不同架构的MCU（Cortex-M比ARM7高了三代！），所以性能也有很大的差距。此外，Cortex-M系列还细分为M0、M3、M4和超低功耗的M0+，用户依据成本、性能、功耗等因素来选择芯片。 cortex-M3与ARM7的比较 比较项目 ARM7 Cortex-M3 架构 ARMv4T（分诺依曼）指令和数据总线共用，或出现瓶颈 ARMv7-M（哈佛）指令和数据线分开，无瓶颈 指令集 32位ARM指令+16位Thumb指令，两套指令之间需要进行状态切换 Thumb/Thumb-2指令集16位和32位指令可直接混写，无需状态切换 流水线 3级流水线，若出现转移则需要刷新流水线，损失惨重 3级流水线+分支预测，出现转移是流水线无需刷新，几乎无损失 性能 0.95DMIPS/MHz（ARM模式） 1.25DMIPS/MHz 功耗 0.28mW/MHz 0.19mW/MHz 低功耗模式 无 内置睡眠模式 面积 0.62mm2（仅内核） 0.86mm2（内核+外设） 中断 普通专断IRQ和快速中断FIQ太少，大量外设不得不复用中断 不可屏蔽中断NMI+1-240个物理中断，每个外设都可以独占一个中断，效率高 中断延迟 24-42个时钟周期，缓慢 12个时钟周期，最快只需6个 中断压栈 软件手工压栈，代码长切效率低 硬件自动压栈，无需代码切效率高 寄存器保护 无 8段存储器保护单元（MPU） 内核寄存器 寄存器分为多组、结构复杂、占核面积多 寄存器不分组（SP除外），结构简单 工作模式 7种工作模式，比较复杂 只有线程模式和处理模式两种，简单 乘除法指令 多周期乘法指令，去除法指令 单周期乘法指令，2-12周期除法指令 位操作 无，访问外设寄存器需分读、改、写 3步走 先进的Bit-band位操作技术，可直接访问外设寄存器的某个值 系统节拍定时 无 内置系统节拍定时器，有利于操作系统移植 stm32的容量问题：M3系列 Example : STM32F103RCT6XXX STM32 ——————————Device family ​ STM32 = ARM-based 32 bit microcontroller F ————————————–Product type ​ F = general-purpose 103 ——————————— Device subfamily ​ 103 = performance line R ———————————–Pin count ​ R = 64 pins, V = 100 pins, Z = 144 pins C ————————————–Flash memory size ​ C = 256 Kbytes of Flash memory ​ D = 384 Kbytes of Flash memory ​ E = 512 Kbytes of Flash memory T —————————————Package ​ H = BGA ​ T = LQFP ​ Y = WLCSP64 6 —————————————Temperature range ​ 6 = Industrial temperature -40 to 85 ℃ ​ 7 = Industrial temperature -40 to 105 ℃ XXX ———————————–Options ​ xxx = programmed parts ​ TR = tape and reel M4系列 Example: STM32F405RET6XXX STM32 ——————————Device family ​ STM32 = ARM-based 32 bit microcontroller F ————————————–Product type ​ F = general-purpose 103 ——————————– Device subfamily ​ 405 = STM32f40x,connectivity ​ 407 = STM32F40x,connectivity,camera,interface,Ethernet R ———————————–Pin count ​ R = 64 pins, ​ O = 90 pins ​ V = 100 pins ​ Z = 144 pins ​ I = 176 pins C ————————————–Flash memory size ​ E = 512 Kbytes of Flash memory ​ G = 1024 Kbytes of Flash memory T —————————————Package ​ H = UFBGA ​ T = LQFP ​ Y = WLCSP 6 —————————————Temperature range ​ 6 = Industrial temperature -40 to 85 ℃ ​ 7 = Industrial temperature -40 to 105 ℃ XXX ———————————–Options ​ xxx = programmed parts ​ TR = tape and reel]]></content>
+      <tags>
+        <tag>ARM</tag>
+        <tag>stm32</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[RTX+STemWin+FatFS移植总结]]></title>
+    <url>%2Fposts%2F81c3e819%2F</url>
+    <content type="text"><![CDATA[RTX+STemWin+FatFS移植总结移植前要知道的概念 ucos-ii是由Micrium公司提供，是一个可移植、可固化的、可裁剪的、占先式多任务实时内核，它适用于多种微处理器，微控制器和数字处理芯片。 RTX是有keil software公司设计的，Keil RTX 是免版税的确定性实时操作系统，适用于 ARM 和 Cortex-M 设备。使用该系统可以创建同时执行多个功能的程序，并有助于创建结构更好且维护更加轻松的应用程序。 ucgui、emwin、STemwin的区别： emwin是由Segger公司提供的一个图形软件库，Segger公司向不同的IC厂家提供库文件： 向Micrium公司提供定制的uC/GUI版本；向ST公司提供定制版的emwin，后改名为STemwin（当用户在 STM32 芯片上使用 emWin软件库时，是不需要向emWin或 ST 公司付费的）； NXP也使用了emwin的图形库，大家使用NXP芯片的时候同样也不需要支付费用。 在选择的时候，虽然功能上没有区别，但因为版权付费问题，在实际使用时就需要根据自己的平台来选择。如果我们使用的是 STM32开发平台，自然我们选择的是STemWin；如果我们使用的是NXP的平台，我们就是用为NXP定制的emwim。在使用特定的平台，我们也需要选择定制的emWin，在 STemWin 里有一个检测机制确定代码所运行的平台，若是 STM32芯片，则运行正常，若非STM32芯片，就不能正常使用了。同样，NXP也是一样的机制。 emiwn官方下载 STemwin官方下载 移植RTX+emwin的keil版本，安富莱的教程上强推MDK4.73版本，说这个版本出现编译错误概率低 移植RTXRTX的移植有两种移植方式：一个是库方式移植，另一个是源码方式移植，详细教程看安富莱_STM32-V4开发板_RTX教程（V1.0）即可，按照手册上的做，就可以移植成功。 安富莱RTX手册 移植STemwinSTemwin的移植照着手册安富莱_STM32-V4开发板_STemWin教程（V1.0）,该手册还是不够详细，有些细致的点没有提到，针对手册中没有讲到的地方，我进行详细的说明。 手册中讲到emwin和STemwin的移植，emwin移植前要注册 RL-ARM,这个只要有注册机，大家会，STemwin的移植要开启CRC校验，RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);这句话就是开启CRC校验，这是ST公司设置的，用于开启STemWin的使用。 下面是手册中对配置文件的修改没有提到的点： GUIConf.h配置: 12345678910111213141516171819202122232425262728#define GUI_NUM_LAYERS 1 // Maximum number of available layers/*********************************************************************** Multi tasking support*/#define GUI_OS (0) // Compile with multitasking support/*********************************************************************** Configuration of touch support*/#define GUI_SUPPORT_TOUCH (0) // Support a touch screen (req. win-manager)/*********************************************************************** Default font*/#define GUI_DEFAULT_FONT &amp;GUI_Font6x8/*********************************************************************** Configuration of available packages*/#define GUI_SUPPORT_MOUSE 0 // Support a mouse#define GUI_WINSUPPORT 0 // Use window manager#define GUI_SUPPORT_MEMDEV 1 // Memory device package available#define GUI_SUPPORT_DEVICES 0 // Enable use of device pointers 上面是12864的相关设置值，对着英文注释，可以容易理解各个宏定义的意义。 LCDConf.c的配置 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950#define XSIZE_PHYS 128 定义emWin分辨率#define YSIZE_PHYS 64//// Color conversion//#define COLOR_CONVERSION GUICC_1 //颜色格式(GUICC_M888即RGB888)//// Display driver////将DISPLAY_DRIVER定义到用户LCD驱动结构体(GUIDRV_Template_API//结构体在GUIDRV_Template.c文件中有定义的)#define DISPLAY_DRIVER &amp;GUIDRV_Template_API /*********************************************************************** Configuration checking************************************************************************/#ifndef VXSIZE_PHYS#define VXSIZE_PHYS XSIZE_PHYS#endif#ifndef VYSIZE_PHYS#define VYSIZE_PHYS YSIZE_PHYS#endif#ifndef VRAM_ADDR#define VRAM_ADDR 0#endif#ifndef XSIZE_PHYS#error Physical X size of display is not defined!#endif#ifndef YSIZE_PHYS#error Physical Y size of display is not defined!#endif#ifndef COLOR_CONVERSION#error Color conversion not defined!#endif#ifndef DISPLAY_DRIVER#error No display driver defined!#endif 以上是12864的宏定义值。 网上关于配置文件的设置，作为补充点 链接1 链接2 ​ ​ ​ ​]]></content>
+      <tags>
+        <tag>c</tag>
+        <tag>RTX</tag>
+        <tag>STemwin</tag>
+        <tag>FatFS</tag>
+      </tags>
+  </entry>
+</search>
